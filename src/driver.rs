@@ -481,9 +481,13 @@ pub fn phase_2_configure_and_expand(sess: &Session,
         sess.abort_if_errors();
     });
 
+    let std_name = match syntax::std_inject::no_std(&krate) {
+        true => "lrs_core",
+        false => "lrs",
+    }.to_string();
 
     krate = time(time_passes, "crate injection", || {
-        syntax::std_inject::maybe_inject_crates_ref(krate, sess.opts.alt_std_name.clone())
+         syntax::std_inject::maybe_inject_crates_ref(krate, Some(std_name))
     });
 
     let macros = time(time_passes,

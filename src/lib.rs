@@ -143,7 +143,9 @@ pub fn run_compiler<'a>(args: &[String], callbacks: &mut CompilerCalls<'a>) {
         None => return,
     };
 
-    let sopts = config::build_session_options(&matches);
+    let mut sopts = config::build_session_options(&matches);
+    sopts.cg.no_stack_check = true;
+    sopts.debugging_opts.no_landing_pads = true;
 
     let descriptions = diagnostics_registry();
 
@@ -183,7 +185,9 @@ pub fn run_compiler<'a>(args: &[String], callbacks: &mut CompilerCalls<'a>) {
         }
     }
 
-    let plugins = sess.opts.debugging_opts.extra_plugins.clone();
+    let mut plugins = sess.opts.debugging_opts.extra_plugins.clone();
+    plugins.push("lrs_core_plugin".to_string());
+
     let control = callbacks.build_controller(&sess);
     driver::compile_input(sess, &cstore, cfg, &input, &odir, &ofile,
                           Some(plugins), control);
