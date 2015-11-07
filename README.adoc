@@ -1,0 +1,27 @@
+= lrsc
+
+lrsc is the lrs compiler. lrsc is almost identical to rustc but changes the
+following things:
+
+* It requires the environment variable `LRS_OBJ_PATH` to be set and will behave
+  as if it had been called with `-L $LRS_OBJ_PATH`.
+* If the `--test` argument is given, it will behave as if it had been called
+  with `--extern test=$LRS_OBJ_PATH/libtest.rlib`.
+* It behaves as if `-Z no-landing-pads` and `-C no-stack-check` had been passed.
+* It automatically loads the `lrs_core_plugin` plugin.
+* Whenever `core` or `std` are injected, they will be injected as `lrs_core as
+  core` and `lrs as std`.
+
+:compare: link:compare/rustc...master
+
+The differences between `lrsc` and `rustc` can be inspected by
+{compare}[comparing] the `master` and the `rustc` branch.
+
+`lrsc` is based on the `rustc` commit `*2e07996a9*` and will be updated
+in irregular intervals. Note that this rust version must be installed before you
+can build `lrsc`.
+
+Building `lrsc` should not take more than a few seconds as it is a rather small
+program. To build it, simply use the provided Makefile. Afterwards you should
+copy the generated file into `dirname $(which rustc)`, as described in the
+readme of the `lib` repository.
