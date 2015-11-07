@@ -944,6 +944,23 @@ pub fn diagnostics_registry() -> diagnostics::registry::Registry {
 }
 
 pub fn main() {
-    let result = run(env::args().collect());
+    let mut args: Vec<_> = env::args().collect();
+    let obj_path = match env::var("LRS_OBJ_PATH") {
+        Ok(s) => {
+            args.push("-L".to_string());
+            args.push(s.clone());
+            s
+        }
+        _ => {
+            println!("Error: LRS_OBJ_PATH not set");
+            return;
+        }
+    };
+    if args.iter().any(|a| a == "--test") {
+        args.push("--extern".to_string());
+        args.push(format!("test={}/libtest.rlib", obj_path));
+    }
+
+    let result = run(args);
     process::exit(result as i32);
 }
