@@ -12,7 +12,7 @@ following things:
 * Whenever `core` or `std` are injected, they will be injected as `lrs_core as
   core` and `lrs as std`.
 
-:compare: link:compare/rustc...master
+:compare: link:https://github.com/lrs-lang/driver/compare/rustc...master
 
 The differences between `lrsc` and `rustc` can be inspected by
 {compare}[comparing] the `master` and the `rustc` branch.
