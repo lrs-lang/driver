@@ -64,6 +64,7 @@ use rustc_resolve as resolve;
 use rustc_trans::back::link;
 use rustc_trans::save;
 use rustc::session::{config, Session, build_session};
+use rustc::session::search_paths::{SearchPaths};
 use rustc::session::config::{Input, PrintRequest, OutputType};
 use rustc::middle::cstore::CrateStore;
 use rustc::lint::Lint;
@@ -142,8 +143,19 @@ pub fn run_compiler<'a>(args: &[String], callbacks: &mut CompilerCalls<'a>) {
     };
 
     let mut sopts = config::build_session_options(&matches);
+
     sopts.cg.no_stack_check = true;
     sopts.debugging_opts.no_landing_pads = true;
+    let obj_path = match env::var("LRS_OBJ_PATH") {
+        Ok(s) => s,
+        _ => {
+            println!("Error: LRS_OBJ_PATH not set");
+            return;
+        }
+    };
+    let mut new_paths = SearchPaths::new();
+    new_paths.add_path(&format!("{}/{}", obj_path, sopts.target_triple), sopts.color);
+    sopts.search_paths = new_paths;
 
     let descriptions = diagnostics_registry();
 
@@ -944,23 +956,6 @@ pub fn diagnostics_registry() -> diagnostics::registry::Registry {
 }
 
 pub fn main() {
-    let mut args: Vec<_> = env::args().collect();
-    let obj_path = match env::var("LRS_OBJ_PATH") {
-        Ok(s) => {
-            args.push("-L".to_string());
-            args.push(s.clone());
-            s
-        }
-        _ => {
-            println!("Error: LRS_OBJ_PATH not set");
-            return;
-        }
-    };
-    if args.iter().any(|a| a == "--test") {
-        args.push("--extern".to_string());
-        args.push(format!("test={}/libtest.rlib", obj_path));
-    }
-
-    let result = run(args);
+    let result = run(env::args().collect());
     process::exit(result as i32);
 }
