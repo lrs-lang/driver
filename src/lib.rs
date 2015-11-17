@@ -64,7 +64,6 @@ use rustc_resolve as resolve;
 use rustc_trans::back::link;
 use rustc_trans::save;
 use rustc::session::{config, Session, build_session};
-use rustc::session::search_paths::{SearchPaths};
 use rustc::session::config::{Input, PrintRequest, OutputType};
 use rustc::middle::cstore::CrateStore;
 use rustc::lint::Lint;
@@ -153,9 +152,13 @@ pub fn run_compiler<'a>(args: &[String], callbacks: &mut CompilerCalls<'a>) {
             return;
         }
     };
-    let mut new_paths = SearchPaths::new();
-    new_paths.add_path(&format!("{}/{}", obj_path, sopts.target_triple), sopts.color);
-    sopts.search_paths = new_paths;
+    sopts.search_paths.add_path(&format!("{}/{}", obj_path, sopts.target_triple),
+                                sopts.color);
+    if sopts.test {
+        sopts.externs.insert("test".to_string(),
+                             vec!(format!("{}/{}/libtest.rlib", obj_path,
+                                          sopts.target_triple)));
+    }
 
     let descriptions = diagnostics_registry();
 
