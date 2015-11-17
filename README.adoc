@@ -4,9 +4,9 @@ lrsc is the lrs compiler. lrsc is almost identical to rustc but changes the
 following things:
 
 * It requires the environment variable `LRS_OBJ_PATH` to be set and will behave
-  as if it had been called with `-L $LRS_OBJ_PATH`.
+  as if it had been called with `-L $LRS_OBJ_PATH/<target>`.
 * If the `--test` argument is given, it will behave as if it had been called
-  with `--extern test=$LRS_OBJ_PATH/libtest.rlib`.
+  with `--extern test=$LRS_OBJ_PATH/<target>/libtest.rlib`.
 * It behaves as if `-Z no-landing-pads` and `-C no-stack-check` had been passed.
 * It automatically loads the `lrs_core_plugin` plugin.
 * Whenever `core` or `std` are injected, they will be injected as `lrs_core as
