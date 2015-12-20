@@ -17,7 +17,7 @@ following things:
 The differences between `lrsc` and `rustc` can be inspected by
 {compare}[comparing] the `master` and the `rustc` branch.
 
-`lrsc` is based on the `rustc` commit `*2e07996a9*` and will be updated
+`lrsc` is based on the `rustc` commit `*abf60b20a*` and will be updated
 in irregular intervals. Note that this rust version must be installed before you
 can build `lrsc`.
 
